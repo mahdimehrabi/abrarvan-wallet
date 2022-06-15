@@ -10,10 +10,8 @@ and also I didn't implement docker-compose version for production
 ## More Scalability
 Used standard library for routing not any framework and no ORM used. <br>
 No external packages that make the performance lower used.<br>
-Used [fastjson](https://github.com/valyala/fastjson) library instead of json and encoding in standard library to
-speed up parsing json **It's about 15x faster**.
 Used [pgx](https://github.com/jackc/pgx) as database interface because 
-we only use PostgreSQL as database and its faster than `database/sql` package in standard library.
+we only use PostgreSQL as database and pgx is faster than `database/sql` package in standard library.
 
 ## Architecture , Design
 The architecture of this project is clean architecture,
