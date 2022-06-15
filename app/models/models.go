@@ -27,8 +27,9 @@ func (m *Model) FromJSON(r io.Reader) error {
 
 type User struct {
 	Model
-	Mobile string  `json:"mobile"`
-	Credit float64 `json:"credit"`
+	Mobile         string  `json:"mobile"`
+	Credit         float64 `json:"credit"`
+	ReceivedCharge bool    `json:"receivedCharge"`
 }
 
 type Code struct {
