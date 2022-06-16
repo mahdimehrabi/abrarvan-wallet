@@ -3,7 +3,7 @@ I implement this project **without** using any framework and ORM
 for best performance , scalability.<br>
 for the purpose of this project I didn't implement all needed features 
 so interfaces don't contain all needed methods ,
-and I didn't implement JSON response generator,swagger,sentry etc.
+and I didn't implement JSON validation , JSON response generator,swagger,sentry etc.
 and also I didn't implement docker-compose version for production
 <br>
 
@@ -25,11 +25,18 @@ Used [uber fx](https://github.com/uber-go/fx) as dependency injection system
 to increase readability and save more memory. 
 
 ## Solution 
-My solution is using redis as in memory DB and storing segment user counts
-every 24 hours on 00:00AM.<br>
-so we only execute a postgres query every 24 hours and we have needed data for next day.
-note:for your comfort in testing I just set scheduling period duration every 30seconds not every 24 hours.
+I used redis as in memory db and postgreSQL as database.<br>
+when we create a discount/charge code this object will be created in both postgres and redis.<br>
+we defined remaining of usage field as `consumer_count`.<br>
+when user use charge/discount code we decrease count of consumer_count in redis,
+when amount of remaining usages become 0 in redis we set rconsumer_count column in postgre
+to 0 too and we set consumer_count in redis to `-1`.
+and after this any requests that come to our server because consumer_count in 
+redis is -1 we just throw 404 error to them.
 
+## Security
+prevented race condition in redis by using [redis transaction](https://redis.io/docs/manual/transactions/).<br>
+prevented users to use charge more than once by defining `recevied_charge` column in users table.<br>
 
 ## Getting started
 `git clone https://github.com/mahdimehrabi/go-challenge.git` <br>
