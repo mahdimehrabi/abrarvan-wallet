@@ -21,9 +21,8 @@ create-migration:
 		@read -p  "What is the name of migration?" NAME; \
 		${MIGRATE} create -ext sql -seq -dir migrations  $$NAME
 
-seed:
-	@echo ".......Please Wait........."
-	${DOCKER_COMMAND} exec web go run ./cmd/. seed
+create-code:
+	${DOCKER_COMMAND} exec web go run ./cmd/. create_code
 
 test-all:
 	${DOCKER_COMMAND} exec web go test ./tests/...
