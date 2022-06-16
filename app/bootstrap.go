@@ -26,12 +26,14 @@ func Bootstrap(
 	lifecycle fx.Lifecycle,
 	logger infrastracture.ArvanLogger,
 	db infrastracture.PgxDB,
+	walletRoutes routes.WalletRoutes,
 ) {
 	port := os.Getenv("ServerPort")
 
 	// create a new serve mux and register routes
 	sm := http.NewServeMux()
 
+	walletRoutes.AddRoutes(sm)
 	// create a new server
 	s := http.Server{
 		Addr:         ":" + port,        // configure the bind address
