@@ -1,6 +1,7 @@
 package services
 
 import (
+	"challange/app/models"
 	"challange/app/repository"
 )
 
@@ -12,6 +13,6 @@ func NewWalletService(walletRepository repository.WalletRepository) WalletServic
 	return WalletService{walletRepository: &walletRepository}
 }
 
-func (ss WalletService) CreateUser(jsonStr []byte) error {
-	return nil
+func (s WalletService) CreateUser(user *models.User) error {
+	return s.walletRepository.CreateUser(user)
 }
