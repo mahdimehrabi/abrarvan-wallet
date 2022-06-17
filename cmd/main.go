@@ -2,11 +2,14 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"challange/app/infrastracture"
+	"challange/app/models"
 	"context"
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -36,12 +39,20 @@ func CreateCode() {
 	code = strings.Replace(code, "\n", "", -1)
 
 	fmt.Print("How much is this code credit(in toman): ")
-	credit, _ := reader.ReadString('\n')
-	credit = strings.Replace(credit, "\n", "", -1)
+	creditStr, _ := reader.ReadString('\n')
+	creditStr = strings.Replace(creditStr, "\n", "", -1)
+	credit, err := strconv.ParseFloat(creditStr, 64)
+	if err != nil {
+		logger.Error("credit must be number or float")
+	}
 
 	fmt.Print("How many users can use this code: ")
-	consumerCount, _ := reader.ReadString('\n')
-	consumerCount = strings.Replace(consumerCount, "\n", "", -1)
+	consumerCountStr, _ := reader.ReadString('\n')
+	consumerCountStr = strings.Replace(consumerCountStr, "\n", "", -1)
+	consumerCount, err := strconv.Atoi(consumerCountStr)
+	if err != nil {
+		logger.Error("consumerCount must be number")
+	}
 
 	parameters := []interface{}{
 		code, credit, consumerCount,
@@ -56,8 +67,21 @@ func CreateCode() {
 		logger.Error("Can't create code ,maybe its already exist")
 		return
 	}
+
+	codeModel := models.Code{
+		Code:          code,
+		Credit:        credit,
+		ConsumerCount: consumerCount,
+	}
+	var buff bytes.Buffer
+
+	err = codeModel.ToJSON(&buff)
+	if err != nil {
+		logger.Error("Can't convert to json")
+		return
+	}
 	//store key in redis
-	err = redis.Set("code_"+code, "ss", 48*time.Hour)
+	err = redis.Set("code_"+code, buff.String(), 48*time.Hour)
 	if err != nil {
 		logger.Error("Warning failed to store in redis:" + err.Error())
 	}
