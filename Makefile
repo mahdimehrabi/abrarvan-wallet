@@ -25,10 +25,10 @@ create-code:
 	${DOCKER_COMMAND} exec web go run ./cmd/. create_code
 
 test-all:
-	${DOCKER_COMMAND} exec web go test ./tests/...
+	${DOCKER_COMMAND} exec web go test ./tests/tests/...
 
 test-all-debugger:
-	${DOCKER_COMMAND} exec web dlv test ./tests --headless --listen=:4000 --api-version=2 --accept-multiclient
+	${DOCKER_COMMAND} exec web dlv test ./tests/tests/ --headless --listen=:4000 --api-version=2 --accept-multiclient
 
 kill-test-debugger:
 	${DOCKER_COMMAND} exec web pkill -f "dlv test"

@@ -6,13 +6,13 @@ import (
 )
 
 type WalletService struct {
-	walletRepository *repository.WalletRepository
+	WalletRepository *repository.WalletRepository
 }
 
 func NewWalletService(walletRepository repository.WalletRepository) WalletService {
-	return WalletService{walletRepository: &walletRepository}
+	return WalletService{WalletRepository: &walletRepository}
 }
 
 func (s WalletService) CreateUser(user *models.User) error {
-	return s.walletRepository.CreateUser(user)
+	return s.WalletRepository.CreateUser(user)
 }
