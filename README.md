@@ -33,7 +33,9 @@ when user use charge/discount code we decrease count of consumer_count in redis,
 when amount of remaining usages become 0 in redis we set rconsumer_count column in postgre
 to 0 too and we set consumer_count in redis to `-1`.
 and after this any requests that come to our server because consumer_count in 
-redis is -1 we just throw 404 error to them.
+redis is -1 we just throw 404 error to them.<br>
+To prevent losing data from redis we run a periodic task
+every hour and update consumer_count of **active** codes in postgres.
 
 ## Security
 prevented race condition in redis by using [redis transaction](https://redis.io/docs/manual/transactions/).<br>
