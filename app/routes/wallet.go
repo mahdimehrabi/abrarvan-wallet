@@ -1,20 +1,20 @@
 package routes
 
 import (
-	"fmt"
+	"challange/app/controller"
 	"net/http"
 )
 
 type WalletRoutes struct {
+	walletController controller.WalletController
 }
 
-func NewWalletRoutes() WalletRoutes {
-	return WalletRoutes{}
+func NewWalletRoutes(walletController controller.WalletController) WalletRoutes {
+	return WalletRoutes{
+		walletController: walletController,
+	}
 }
 
 func (r WalletRoutes) AddRoutes(sm *http.ServeMux) {
-	sm.HandleFunc("/wallet/users", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "hello world")
-		w.WriteHeader(200)
-	})
+	sm.HandleFunc("/use-code", r.walletController.UseCode)
 }
