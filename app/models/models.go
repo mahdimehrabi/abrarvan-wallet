@@ -8,7 +8,7 @@ import (
 type User struct {
 	Mobile         string  `json:"mobile"`
 	Credit         float64 `json:"credit"`
-	ReceivedCharge bool    `json:"receivedCharge"`
+	ReceivedCharge bool    `json:"-"`
 }
 
 func (m *User) ToJSON(w io.Writer) error {
