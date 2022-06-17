@@ -10,8 +10,8 @@ import (
 )
 
 type WalletController struct {
-	logger        interfaces.Logger
-	walletService services.WalletService
+	Logger        interfaces.Logger
+	WalletService services.WalletService
 }
 
 func NewWalletController(
@@ -19,8 +19,8 @@ func NewWalletController(
 	walletService services.WalletService,
 ) WalletController {
 	return WalletController{
-		logger:        &logger,
-		walletService: walletService,
+		Logger:        &logger,
+		WalletService: walletService,
 	}
 }
 
@@ -32,13 +32,13 @@ func (c *WalletController) UseCode(w http.ResponseWriter, r *http.Request) {
 	user := new(models.User)
 	err := user.FromJSON(r.Body)
 	if err != nil {
-		c.logger.Error(err.Error())
+		c.Logger.Error(err.Error())
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
-	err = c.walletService.CreateUser(user)
+	err = c.WalletService.CreateUser(user)
 	if err != nil {
-		c.logger.Error(err.Error())
+		c.Logger.Error(err.Error())
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}

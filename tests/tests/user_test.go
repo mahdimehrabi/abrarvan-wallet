@@ -1,11 +1,14 @@
 package tests
 
 import (
+	"challange/app/controller"
 	"challange/app/infrastracture"
-	"challange/app/models"
 	"challange/app/repository"
 	"challange/app/services"
 	"challange/tests/mocks"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -21,13 +24,23 @@ func TestCreateUser(t *testing.T) {
 	walletService := services.WalletService{
 		WalletRepository: &walletRepository,
 	}
-	user := models.User{
-		Mobile:         "09120401761",
-		Credit:         4000,
-		ReceivedCharge: true,
+	walletController := controller.WalletController{
+		Logger:        &logger,
+		WalletService: walletService,
 	}
-	err := walletService.CreateUser(&user)
-	if err != nil {
-		t.Error("error in create user:", err)
+
+	data := map[string]interface{}{
+		"mobile":         "09120401761",
+		"credit":         4000,
+		"receivedCharge": true,
+	}
+	req, _ := http.NewRequest("POST",
+		"/use-code",
+		infrastracture.MapToJsonBytesBuffer(data))
+	w := httptest.NewRecorder()
+	walletController.UseCode(w, req)
+	body := w.Body.String()
+	if !strings.Contains(body, "Created") || w.Code != http.StatusOK {
+		t.Error("user not created")
 	}
 }
