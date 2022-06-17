@@ -1,7 +1,7 @@
 CREATE TABLE "users" (
     mobile      VARCHAR(15) UNIQUE NOT NULL PRIMARY KEY,
     credit      DECIMAL DEFAULT 0,
-    recevied_charge BOOLEAN DEFAULT FALSE
+    received_charge BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE "codes"(
