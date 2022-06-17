@@ -3,8 +3,8 @@ I implement this project **without** using any framework and ORM
 for best performance , scalability.<br>
 for the purpose of this project I didn't implement all needed features 
 so interfaces don't contain all needed methods ,
-and I didn't implement JSON validation , JSON response generator,swagger,sentry etc.
-and also I didn't implement docker-compose version for production
+and I didn't implement UX related stuff like validation messages and response messages ,
+also I didn't implement docker-compose version for production.
 <br>
 
 ## More Scalability
