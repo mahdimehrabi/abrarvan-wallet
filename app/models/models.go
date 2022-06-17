@@ -36,5 +36,5 @@ type Code struct {
 	Model
 	Code          string  `json:"code"`
 	Credit        float64 `json:"credit"`
-	ConsumerCount float64 `json:"consumerCount"`
+	ConsumerCount int     `json:"consumerCount"`
 }
