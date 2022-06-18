@@ -54,7 +54,7 @@ but decreasing consumer_count fail we will not add charge to user.
 
 `git clone https://github.com/mahdimehrabi/abrarvan-wallet.git` <br>
 copy env file <br>
-`cd gin-gorm-boilerplate`<br>
+`cd abrarvan-wallet`<br>
 `cp env.example .env` <br>
 
 create docker volume and start <br>
