@@ -29,26 +29,26 @@ Used [uber fx](https://github.com/uber-go/fx) as dependency injection system
 to increase readability and save more memory.
 
 ## Solution
-
 I used redis as in memory db and postgreSQL as database.<br>
 when we create a discount/charge code this object will be created in both postgres and redis.<br>
 we defined remaining of usage field as `consumer_count`.<br>
 when user use charge/discount code we decrease count of consumer_count in redis,
-when amount of remaining usages become 0 in redis we set rconsumer_count column in postgre
-to 0 too and we set consumer_count in redis to `-1`.
+when amount of remaining usages become 0 in redis we set consumer_count column in postgre
+to 0 too, and we set consumer_count in redis to `-1`.
 and after this any requests that come to our server because consumer_count in
-redis is -1 we just throw 404 error to them.<br>
+redis is -1 we just throw 404 or 400 error to them.<br>
 To prevent losing data from redis we run a periodic task
 every hour and update consumer_count of **active** codes in postgres.
+
+
+## Security
+prevented race condition in redis by using [redis transaction](https://redis.io/docs/manual/transactions/).<br>
+prevented users to use charge more than once by defining `recevied_charge` column in users table.
+(I handled it by just a boolean field which is wrong, and I must use a json column or many to many field but for purpose of this project I kept it simple)
+<br>
 in decreasing action if anything goes wrong we cancel other actions ,
 for example if adding charge to user be successful,
 but decreasing consumer_count fail we will not add charge to user.
-
-## Security
-
-prevented race condition in redis by using [redis transaction](https://redis.io/docs/manual/transactions/).<br>
-prevented users to use charge more than once by defining `recevied_charge` column in users table.<br>
-
 ## Getting started
 
 `git clone https://github.com/mahdimehrabi/go-challenge.git` <br>
