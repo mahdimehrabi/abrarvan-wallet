@@ -6,7 +6,7 @@ for the purpose of this project I didn't implement all needed features
 so interfaces don't contain all needed methods ,
 and I didn't implement UX related stuff like validation messages and response messages ,
 also I didn't implement docker-compose version for production.
-I know you don't needed test for this project , but I wrote unit test and mock for this project.
+I know you don't needed test for this project , but I wrote example unit test and mock for this project, so you understand how I write test.
 <br>
 
 ## More Scalability
@@ -38,7 +38,7 @@ to 0 too, and we set consumer_count in redis to `-1`.
 and after this any requests that come to our server because consumer_count in
 redis is -1 we just throw 404 or 400 error to them.<br>
 To prevent losing data from redis we run a periodic task
-every hour and update consumer_count of **active** codes in postgres.
+every hour(for your comfort in check and test i set it to 30 seconds) and update consumer_count of **active** codes in postgres.
 
 
 ## Security
