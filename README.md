@@ -45,7 +45,8 @@ note:for your comfort in check and test I changed time duration to 30 seconds.
 ## Security
 prevented race condition in redis by using [redis transaction](https://redis.io/docs/manual/transactions/).<br>
 prevented users to use charge/discount code more than once by defining `recevied_charge` column in users table.
-(I handled it by just a boolean field which is wrong, and I must use a json column or many to many field but for purpose of this project I kept it simple)
+(I handled it by just a boolean field which is wrong, and I must use a json column or many to many field
+but for purpose of this project I kept it simple,**so you can use a mobile number only one time**)
 <br>
 in decreasing action if anything goes wrong we cancel other actions ,
 for example if adding charge to user be successful,
