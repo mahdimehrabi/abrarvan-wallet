@@ -43,7 +43,7 @@ func (r *Redis) DecreaseConsumerCount(code string) (consumerCount int, err error
 	ctx := context.Background()
 	txf := func(tx *redis.Tx) error {
 		// Get the current value or zero.
-		bJson, err := tx.Get(ctx, code).Bytes()
+		bJson, err := tx.Get(ctx, "code_"+code).Bytes()
 		if err != nil && err != redis.Nil {
 			return err
 		}
@@ -55,6 +55,7 @@ func (r *Redis) DecreaseConsumerCount(code string) (consumerCount int, err error
 			return err
 		}
 		code.ConsumerCount--
+		consumerCount = code.ConsumerCount
 
 		var buff bytes.Buffer
 		err = code.ToJSON(&buff)
@@ -72,7 +73,7 @@ func (r *Redis) DecreaseConsumerCount(code string) (consumerCount int, err error
 
 	// Retry if the key has been changed.
 	for i := 0; i < 200; i++ {
-		err := r.client.Watch(ctx, txf, code)
+		err := r.client.Watch(ctx, txf, "code_"+code)
 		if err == nil {
 			// Success.
 			return consumerCount, nil

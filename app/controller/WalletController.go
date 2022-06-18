@@ -29,20 +29,26 @@ func (c *WalletController) UseCode(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	user := new(models.User)
-	err := user.FromJSON(r.Body)
+	reqData := new(models.UseCodeReq)
+	err := reqData.FromJSON(r.Body)
 	if err != nil {
 		c.Logger.Error(err.Error())
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
-	err = c.WalletService.CreateUser(user)
+	//try to create user with mobile number
+	c.WalletService.CreateUser(&models.User{
+		Mobile: reqData.Mobile,
+	})
+
+	err = c.WalletService.TryDecreaseConsumerCount(reqData.Code)
 	if err != nil {
 		c.Logger.Error(err.Error())
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
-	fmt.Fprint(w, "Created user")
+
+	fmt.Fprint(w, "Created reqData")
 	w.WriteHeader(200)
 	return
 }

@@ -84,7 +84,7 @@ func (r WalletRepository) TryDecreaseConsumerCount(code string) error {
 }
 
 func (r WalletRepository) checkCreateCodeMemoryDB(code string) (codeModel models.Code, err error) {
-	code, err = r.MemoryDB.Get("code")
+	code, err = r.MemoryDB.Get("code_" + code)
 	if err == nil && code != "" {
 		err = codeModel.FromJSON(strings.NewReader(code))
 		if err != nil {

@@ -16,3 +16,7 @@ func NewWalletService(walletRepository repository.WalletRepository) WalletServic
 func (s WalletService) CreateUser(user *models.User) error {
 	return s.WalletRepository.CreateUser(user)
 }
+
+func (s WalletService) TryDecreaseConsumerCount(code string) error {
+	return s.WalletRepository.TryDecreaseConsumerCount(code)
+}
