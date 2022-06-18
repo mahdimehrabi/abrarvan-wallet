@@ -1,7 +1,11 @@
 package infrastracture
 
 import (
-	"github.com/go-redis/redis"
+	"bytes"
+	"challange/app/models"
+	"context"
+	"errors"
+	"github.com/go-redis/redis/v9"
 	"time"
 )
 
@@ -21,7 +25,8 @@ func NewRedis() Redis {
 }
 
 func (r *Redis) Get(key string) (string, error) {
-	strcmd := r.client.Get(key)
+	ctx := context.Background()
+	strcmd := r.client.Get(ctx, key)
 	if err := strcmd.Err(); err != nil {
 		return "", err
 	}
@@ -29,6 +34,56 @@ func (r *Redis) Get(key string) (string, error) {
 }
 
 func (r *Redis) Set(key string, value string, expiration time.Duration) error {
-	strcmd := r.client.Set(key, value, expiration)
+	ctx := context.Background()
+	strcmd := r.client.Set(ctx, key, value, expiration)
 	return strcmd.Err()
+}
+
+func (r *Redis) DecreaseConsumerCount(code string) (consumerCount int, err error) {
+	ctx := context.Background()
+	txf := func(tx *redis.Tx) error {
+		// Get the current value or zero.
+		bJson, err := tx.Get(ctx, code).Bytes()
+		if err != nil && err != redis.Nil {
+			return err
+		}
+		bReader := bytes.NewReader(bJson)
+
+		code := models.Code{}
+		err = code.FromJSON(bReader)
+		if err != nil {
+			return err
+		}
+		code.ConsumerCount--
+
+		var buff bytes.Buffer
+		err = code.ToJSON(&buff)
+		if err != nil {
+			return err
+		}
+
+		// Operation is commited only if the watched keys remain unchanged.
+		_, err = tx.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
+			pipe.Set(ctx, code.Code, buff.String(), 0)
+			return nil
+		})
+		return err
+	}
+
+	// Retry if the key has been changed.
+	for i := 0; i < 200; i++ {
+		err := r.client.Watch(ctx, txf, code)
+		if err == nil {
+			// Success.
+			return consumerCount, nil
+		}
+		if err == redis.TxFailedErr {
+			// Optimistic lock lost. Retry.
+			continue
+		}
+		// Return any other error.
+		return 0, err
+	}
+
+	return 0, errors.New("increment reached maximum number of retries")
 }

@@ -8,6 +8,23 @@ import (
 	"os"
 )
 
+type Transaction struct {
+	Tx pgx.Tx
+}
+
+func (t Transaction) Rollback(ctx context.Context) error {
+	return t.Tx.Rollback(ctx)
+}
+
+func (t Transaction) Exec(ctx context.Context, sql string, arguments ...interface{}) error {
+	_, err := t.Tx.Exec(ctx, sql, arguments...)
+	return err
+}
+
+func (t Transaction) Commit(ctx context.Context) error {
+	return t.Tx.Commit(ctx)
+}
+
 type PgxDB struct {
 	logger interfaces.Logger
 	Conn   *pgx.Conn
@@ -70,4 +87,10 @@ func (db *PgxDB) QueryRow(
 	parameters []interface{},
 	scans ...interface{}) error {
 	return db.Conn.QueryRow(ctx, query, parameters...).Scan(scans...)
+}
+
+func (db *PgxDB) Begin(ctx context.Context) (interfaces.Transaction, error) {
+	t, err := db.Conn.Begin(ctx)
+	tx := Transaction{Tx: t}
+	return tx, err
 }

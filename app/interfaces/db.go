@@ -1,6 +1,8 @@
 package interfaces
 
-import "context"
+import (
+	"context"
+)
 
 type Model interface {
 	SliceToModel(data []interface{}) error
@@ -25,4 +27,13 @@ type DB interface {
 		query string,
 		parameters []interface{},
 	) (slc [][]interface{}, err error)
+
+	//get a transaction
+	Begin(ctx context.Context) (Transaction, error)
+}
+
+type Transaction interface {
+	Rollback(ctx context.Context) error
+	Exec(ctx context.Context, sql string, arguments ...interface{}) error
+	Commit(ctx context.Context) error
 }

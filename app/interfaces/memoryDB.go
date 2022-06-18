@@ -8,4 +8,6 @@ type MemoryDB interface {
 
 	//get from memory db
 	Get(key string) (string, error)
+
+	DecreaseConsumerCount(code string) (consumerCount int, err error)
 }
