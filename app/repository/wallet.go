@@ -19,10 +19,10 @@ type WalletRepository struct {
 
 func (r WalletRepository) CreateUser(user *models.User) error {
 	parameters := []interface{}{
-		user.Mobile, user.Credit, true,
+		user.Mobile, 0, false,
 	}
 	_, err := r.DB.Exec(context.TODO(),
-		"INSERT INTO USERS(mobile,credit,received_charge) values($1,$2,$3)",
+		"INSERT INTO USERS(mobile,credit,received_charge) values($1,$2,$3) ON CONFLICT DO NOTHING",
 		parameters,
 	)
 	return err
