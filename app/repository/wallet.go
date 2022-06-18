@@ -28,10 +28,10 @@ func (r WalletRepository) CreateUser(user *models.User) error {
 	return err
 }
 
-func (r WalletRepository) TryDecreaseConsumerCount(code string) error {
+func (r WalletRepository) TryDecreaseConsumerCount(code string, mobile string) error {
 
 	//check code availability
-	codeModel, err := r.checkCreateCodeMemoryDB(code)
+	codeModel, err := r.GetCreateCodeMemoryDB(code)
 	if err != nil || codeModel.ConsumerCount < 1 {
 		return errors.New("this code is not available")
 	}
@@ -45,7 +45,8 @@ func (r WalletRepository) TryDecreaseConsumerCount(code string) error {
 	defer tx.Rollback(ctx)
 
 	//update users credit
-	err = tx.Exec(ctx, "UPDATE users SET credit=credit+$1 ", codeModel.Credit)
+	err = tx.Exec(ctx, "UPDATE users SET credit=credit+$1 WHERE mobile=$2",
+		codeModel.Credit, mobile)
 	if err != nil {
 		return err
 	}
@@ -83,7 +84,7 @@ func (r WalletRepository) TryDecreaseConsumerCount(code string) error {
 	return nil
 }
 
-func (r WalletRepository) checkCreateCodeMemoryDB(code string) (codeModel models.Code, err error) {
+func (r WalletRepository) GetCreateCodeMemoryDB(code string) (codeModel models.Code, err error) {
 	code, err = r.MemoryDB.Get("code_" + code)
 	if err == nil && code != "" {
 		err = codeModel.FromJSON(strings.NewReader(code))
@@ -93,25 +94,9 @@ func (r WalletRepository) checkCreateCodeMemoryDB(code string) (codeModel models
 		return
 	}
 
-	var credit float64
-	var consumerCount int64
-	parameters := []interface{}{code}
-
-	//check key exist postgres
-	err = r.DB.QueryRow(context.TODO(),
-		"SELECT * FROM codes where code=$1",
-		parameters, code, credit, consumerCount)
+	codeModel, err = r.getCodeFromDB(code)
 	if err != nil {
 		return
-	}
-	if code == "" {
-		err = errors.New("Code not found!")
-		return
-	}
-	codeModel = models.Code{
-		Code:          code,
-		Credit:        credit,
-		ConsumerCount: int(consumerCount),
 	}
 
 	var buff bytes.Buffer
@@ -125,6 +110,28 @@ func (r WalletRepository) checkCreateCodeMemoryDB(code string) (codeModel models
 	}
 
 	return
+}
+
+func (r WalletRepository) getCodeFromDB(code string) (models.Code, error) {
+	var credit float64
+	var consumerCount int64
+	parameters := []interface{}{code}
+	err := r.DB.QueryRow(context.TODO(),
+		"SELECT * FROM codes where code=$1",
+		parameters, code, credit, consumerCount)
+	if err != nil {
+		return models.Code{}, err
+	}
+	if code == "" {
+		err = errors.New("Code not found!")
+		return models.Code{}, err
+	}
+	codeModel := models.Code{
+		Code:          code,
+		Credit:        credit,
+		ConsumerCount: int(consumerCount),
+	}
+	return codeModel, nil
 }
 
 func NewWalletRepository(

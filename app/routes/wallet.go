@@ -16,5 +16,7 @@ func NewWalletRoutes(walletController controller.WalletController) WalletRoutes 
 }
 
 func (r WalletRoutes) AddRoutes(sm *http.ServeMux) {
-	sm.HandleFunc("/use-code", r.walletController.UseCode)
+	sm.HandleFunc("/codes/use", r.walletController.UseCode)
+	sm.HandleFunc("/codes/report", r.walletController.Report)
+
 }

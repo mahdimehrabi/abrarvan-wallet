@@ -65,7 +65,7 @@ func (r *Redis) DecreaseConsumerCount(code string) (consumerCount int, err error
 
 		// Operation is commited only if the watched keys remain unchanged.
 		_, err = tx.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
-			pipe.Set(ctx, code.Code, buff.String(), 0)
+			pipe.Set(ctx, "code_"+code.Code, buff.String(), 0)
 			return nil
 		})
 		return err
