@@ -16,6 +16,9 @@ func TestCreateUser(t *testing.T) {
 	logger := infrastracture.ArvanLogger{}
 	db := mocks.NewDB()
 	memoryDB := mocks.NewMemoryDB()
+	memoryDB.MockGetFn = func(s string) (string, error) {
+		return `{"code":"hello","credit":50000,"consumerCount":1000}`, nil
+	}
 	walletRepository := repository.WalletRepository{
 		Logger:   &logger,
 		DB:       db,
@@ -30,9 +33,8 @@ func TestCreateUser(t *testing.T) {
 	}
 
 	data := map[string]interface{}{
-		"mobile":         "09120401761",
-		"credit":         4000,
-		"receivedCharge": true,
+		"mobile": "09120401761",
+		"code":   "hello",
 	}
 	req, _ := http.NewRequest("POST",
 		"/use-code",
@@ -40,7 +42,7 @@ func TestCreateUser(t *testing.T) {
 	w := httptest.NewRecorder()
 	walletController.UseCode(w, req)
 	body := w.Body.String()
-	if !strings.Contains(body, "Created") || w.Code != http.StatusOK {
-		t.Error("user not created")
+	if !strings.Contains(body, "Congratulation") || w.Code != http.StatusOK {
+		t.Error("using charge code failed")
 	}
 }

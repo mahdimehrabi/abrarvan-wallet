@@ -1,6 +1,9 @@
 package mocks
 
-import "context"
+import (
+	"challange/app/interfaces"
+	"context"
+)
 
 type DB struct {
 	MockExecFn func(context.Context,
@@ -16,6 +19,8 @@ type DB struct {
 		string,
 		[]interface{},
 	) ([][]interface{}, error)
+
+	MockBeginFn func(ctx context.Context) (interfaces.Transaction, error)
 }
 
 func (db *DB) Exec(ctx context.Context,
@@ -37,6 +42,10 @@ func (db *DB) Query(ctx context.Context,
 	return db.MockQueryFn(ctx, query, parameters)
 }
 
+func (db *DB) Begin(ctx context.Context) (interfaces.Transaction, error) {
+	return db.MockBeginFn(ctx)
+}
+
 func NewDB() *DB {
 	return &DB{
 		MockExecFn: func(ctx context.Context, s string, i []interface{}) (int64, error) {
@@ -47,6 +56,9 @@ func NewDB() *DB {
 		},
 		MockQueryRowFn: func(ctx context.Context, s string, i []interface{}, i2 ...interface{}) error {
 			return nil
+		},
+		MockBeginFn: func(ctx context.Context) (interfaces.Transaction, error) {
+			return NewTransaction(), nil
 		},
 	}
 }
