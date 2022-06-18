@@ -45,10 +45,11 @@ func (r WalletRepository) TryDecreaseConsumerCount(code string, mobile string) e
 	defer tx.Rollback(ctx)
 
 	//update users credit
-	err = tx.Exec(ctx, "UPDATE users SET credit=credit+$1 WHERE mobile=$2",
+	rowsAffected, err := tx.Exec(ctx,
+		"UPDATE users SET credit=credit+$1,received_charge=TRUE WHERE mobile=$2 AND received_charge=FALSE",
 		codeModel.Credit, mobile)
-	if err != nil {
-		return err
+	if rowsAffected != 1 || err != nil {
+		return errors.New("can't find proper user with this mobile")
 	}
 
 	//decrease consumer count

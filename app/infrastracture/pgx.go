@@ -16,9 +16,9 @@ func (t Transaction) Rollback(ctx context.Context) error {
 	return t.Tx.Rollback(ctx)
 }
 
-func (t Transaction) Exec(ctx context.Context, sql string, arguments ...interface{}) error {
-	_, err := t.Tx.Exec(ctx, sql, arguments...)
-	return err
+func (t Transaction) Exec(ctx context.Context, sql string, arguments ...interface{}) (int64, error) {
+	cm, err := t.Tx.Exec(ctx, sql, arguments...)
+	return cm.RowsAffected(), err
 }
 
 func (t Transaction) Commit(ctx context.Context) error {

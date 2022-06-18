@@ -27,13 +27,12 @@ type DB interface {
 		query string,
 		parameters []interface{},
 	) (slc [][]interface{}, err error)
-
 	//get a transaction
 	Begin(ctx context.Context) (Transaction, error)
 }
 
 type Transaction interface {
 	Rollback(ctx context.Context) error
-	Exec(ctx context.Context, sql string, arguments ...interface{}) error
+	Exec(ctx context.Context, sql string, arguments ...interface{}) (int64, error)
 	Commit(ctx context.Context) error
 }
