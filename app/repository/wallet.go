@@ -85,9 +85,9 @@ func (r WalletRepository) TryDecreaseConsumerCount(code string, mobile string) e
 }
 
 func (r WalletRepository) GetCreateCodeMemoryDB(code string) (codeModel models.Code, err error) {
-	code, err = r.MemoryDB.Get("code_" + code)
+	codeJson, err := r.MemoryDB.Get("code_" + code)
 	if err == nil && code != "" {
-		err = codeModel.FromJSON(strings.NewReader(code))
+		err = codeModel.FromJSON(strings.NewReader(codeJson))
 		if err != nil {
 			return
 		}
@@ -118,7 +118,7 @@ func (r WalletRepository) getCodeFromDB(code string) (models.Code, error) {
 	parameters := []interface{}{code}
 	err := r.DB.QueryRow(context.TODO(),
 		"SELECT * FROM codes where code=$1",
-		parameters, code, credit, consumerCount)
+		parameters, &code, &credit, &consumerCount)
 	if err != nil {
 		return models.Code{}, err
 	}
