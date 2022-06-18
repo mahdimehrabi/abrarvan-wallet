@@ -76,24 +76,51 @@ or restart docker-compose `docker-compose down && docker-compsoe up -d` <br>
 
 #### Now you can send your requests to Endpoints
 
-POST `localhost:8000/users`  Create new user send <br>
+POST `localhost:8000/codes/report` Report of a discount/charge code <br>
 example **request** data
-
 ```
 {
-    "ID":"fsas42aa3af",
-    "segment":"1aa1x",
-    "expiredSegment":1655209411
+    "code":"salam"
 }
 ```
 
-GET `localhost:8000/segments/count` get segments and it user counts
+example **response** data
+```
+{
+    "code": "salam",
+    "credit": 1000000,
+    "consumerCount": 1990
+}
+```
+
+POST `localhost:8000/codes/use` use a discount/charge code <br>
+example **request** data
+```
+{
+    "code":"salam",
+    "mobile":"093648644710"
+}
+```
 
 example **response** data
-
 ```
-[
-{"title":"RU","usersCount":50052132},
-{"title":"z12XTowIA2","usersCount":45235009}
-]
+Congratulation your credit increased! 🎉
+```
+
+
+
+POST `localhost:8000/wallet/balance` Balance of the user account <br>
+example **request** data
+```
+{
+    "mobile":"09120401761"
+}
+```
+
+example **response** data
+```
+{
+    "mobile": "09120401761",
+    "balance": 13004000
+}
 ```
