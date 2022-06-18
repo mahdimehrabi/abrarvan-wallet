@@ -77,23 +77,6 @@ or restart docker-compose `docker-compose down && docker-compsoe up -d` <br>
 
 #### Now you can send your requests to Endpoints
 
-POST `localhost:8000/codes/report` Report of a discount/charge code <br>
-example **request** data
-```
-{
-    "code":"salam"
-}
-```
-
-example **response** data
-```
-{
-    "code": "salam",
-    "credit": 1000000,
-    "consumerCount": 1990
-}
-```
-
 POST `localhost:8000/codes/use` use a discount/charge code <br>
 example **request** data
 ```
@@ -123,5 +106,22 @@ example **response** data
 {
     "mobile": "09120401761",
     "balance": 13004000
+}
+```
+
+POST `localhost:8000/codes/report` Report of a discount/charge code <br>
+example **request** data
+```
+{
+    "code":"salam"
+}
+```
+
+example **response** data
+```
+{
+    "code": "salam",
+    "credit": 1000000,
+    "consumerCount": 1990
 }
 ```
