@@ -51,7 +51,7 @@ for example if adding charge to user be successful,
 but decreasing consumer_count fail we will not add charge to user.
 ## Getting started
 
-`git clone https://github.com/mahdimehrabi/go-challenge.git` <br>
+`git clone https://github.com/mahdimehrabi/abrarvan-wallet.git` <br>
 copy env file <br>
 `cd gin-gorm-boilerplate`<br>
 `cp env.example .env` <br>
@@ -68,11 +68,10 @@ run migrations <br>
 run tests <br>
 `make test-all`
 
-generate some users (seed), this command create between 1 and 1000 random users
-,so feel free to use this command as many times as you want to create more users.<br>
-`make seed`
+Create a discount/charge code <br>
+`make create-code`
 
-now please edit a file(just add new line or tab or space is enought) and save (to restart delve server)
+now please edit a file(just add new line or tab or space is enough) and save (to restart delve server)
 or restart docker-compose `docker-compose down && docker-compsoe up -d` <br>
 
 #### Now you can send your requests to Endpoints
