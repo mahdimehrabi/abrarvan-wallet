@@ -135,6 +135,16 @@ func (r WalletRepository) getCodeFromDB(code string) (models.Code, error) {
 	return codeModel, nil
 }
 
+func (r WalletRepository) UserBalance(user *models.User) error {
+	err := r.DB.QueryRow(context.TODO(), "SELECT * FROM users WHERE mobile=$1",
+		[]interface{}{user.Mobile},
+		&user.Mobile, &user.Credit, &user.ReceivedCharge)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func NewWalletRepository(
 	logger infrastracture.ArvanLogger,
 	db infrastracture.PgxDB,

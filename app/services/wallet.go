@@ -24,3 +24,7 @@ func (s WalletService) TryDecreaseConsumerCount(code string, mobile string) erro
 func (s WalletService) ReportCode(code string) (models.Code, error) {
 	return s.WalletRepository.GetCreateCodeMemoryDB(code)
 }
+
+func (s WalletService) UserBalance(user *models.User) error {
+	return s.WalletRepository.UserBalance(user)
+}

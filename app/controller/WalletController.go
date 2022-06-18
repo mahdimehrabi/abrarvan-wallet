@@ -85,3 +85,32 @@ func (c *WalletController) Report(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 }
+
+func (c *WalletController) Balance(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	user := new(models.User)
+	err := user.FromJSON(r.Body)
+	if err != nil {
+		c.Logger.Error(err.Error())
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
+	//try to create user with mobile number
+	err = c.WalletService.UserBalance(user)
+	if err != nil {
+		c.Logger.Error(err.Error())
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
+
+	err = user.ToJSON(w)
+	if err != nil {
+		c.Logger.Error(err.Error())
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}

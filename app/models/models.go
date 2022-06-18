@@ -7,7 +7,7 @@ import (
 
 type User struct {
 	Mobile         string  `json:"mobile"`
-	Credit         float64 `json:"credit"`
+	Credit         float64 `json:"balance"`
 	ReceivedCharge bool    `json:"-"`
 }
 
