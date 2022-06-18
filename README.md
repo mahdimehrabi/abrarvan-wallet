@@ -38,12 +38,13 @@ to 0 too, and we set consumer_count in redis to `-1`.
 and after this any requests that come to our server because consumer_count in
 redis is -1 we just throw 404 or 400 error to them.<br>
 To prevent losing data from redis we run a periodic task
-every hour(for your comfort in check and test i set it to 30 seconds) and update consumer_count of **active** codes in postgres.
+every hour and update consumer_count of **active** codes in postgres.
+note:for your comfort in check and test I changed time duration to 30 seconds.
 
 
 ## Security
 prevented race condition in redis by using [redis transaction](https://redis.io/docs/manual/transactions/).<br>
-prevented users to use charge more than once by defining `recevied_charge` column in users table.
+prevented users to use charge/discount code more than once by defining `recevied_charge` column in users table.
 (I handled it by just a boolean field which is wrong, and I must use a json column or many to many field but for purpose of this project I kept it simple)
 <br>
 in decreasing action if anything goes wrong we cancel other actions ,
